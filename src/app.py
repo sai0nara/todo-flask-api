@@ -20,6 +20,10 @@ with app.app_context():
 # --- Routes ---
 @app.get("/todos")
 def get_todos():
+    completed_param = request.args.get("completed")
+    if completed_param is not None:
+        completed = completed_param.lower() == "true"
+        return jsonify(get_all_todos(completed=completed)), 200
     return jsonify(get_all_todos()), 200
 
 

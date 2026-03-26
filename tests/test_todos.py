@@ -41,6 +41,35 @@ class TestGetTodos:
         assert data[0]["title"] == "First"
         assert data[1]["title"] == "Second"
 
+    def test_filter_completed(self, client):
+        client.post("/todos", json={"title": "Done"})
+        client.post("/todos", json={"title": "Not done"})
+        client.put("/todos/1", json={"completed": True})
+        resp = client.get("/todos?completed=true")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert len(data) == 1
+        assert data[0]["title"] == "Done"
+        assert data[0]["completed"] is True
+
+    def test_filter_not_completed(self, client):
+        client.post("/todos", json={"title": "Done"})
+        client.post("/todos", json={"title": "Not done"})
+        client.put("/todos/1", json={"completed": True})
+        resp = client.get("/todos?completed=false")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert len(data) == 1
+        assert data[0]["title"] == "Not done"
+        assert data[0]["completed"] is False
+
+    def test_no_filter_returns_all(self, client):
+        client.post("/todos", json={"title": "Done"})
+        client.post("/todos", json={"title": "Not done"})
+        client.put("/todos/1", json={"completed": True})
+        resp = client.get("/todos")
+        assert len(resp.get_json()) == 2
+
 
 class TestGetTodoById:
     def test_get_existing(self, client):
