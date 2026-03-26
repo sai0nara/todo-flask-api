@@ -78,5 +78,10 @@ def delete_todo_route(todo_id):
     return jsonify({"message": "Todo deleted"}), 200
 
 
+@app.get("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
