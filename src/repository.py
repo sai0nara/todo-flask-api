@@ -48,9 +48,14 @@ def row_to_dict(row):
     }
 
 
-def get_all_todos():
+def get_all_todos(completed=None):
     db = get_db()
-    rows = db.execute("SELECT * FROM todos").fetchall()
+    if completed is not None:
+        rows = db.execute(
+            "SELECT * FROM todos WHERE completed = ?", (int(completed),)
+        ).fetchall()
+    else:
+        rows = db.execute("SELECT * FROM todos").fetchall()
     return [row_to_dict(r) for r in rows]
 
 
